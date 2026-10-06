@@ -1,0 +1,51 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.conduktor/kafka-mcp",
+  "description": "Query Kafka clusters, topics, consumer groups and schemas in natural language, through Conduktor Console. Read-only, inherits the caller's RBAC.",
+  "title": "Conduktor",
+  "repository": {
+    "url": "https://github.com/conduktor/kafka-mcp",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "websiteUrl": "https://www.conduktor.io/mcp",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "mcp-remote",
+      "version": "0.1.29",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeArguments": [
+        {
+          "type": "positional",
+          "value": "{console_url}/api/mcp",
+          "description": "Your Conduktor Console MCP endpoint",
+          "isRequired": true,
+          "variables": {
+            "console_url": {
+              "description": "Base URL of your Conduktor Console, e.g. https://console.acme-corp.com",
+              "isRequired": true,
+              "format": "string"
+            }
+          }
+        },
+        {
+          "type": "named",
+          "name": "--header",
+          "value": "Authorization: Bearer {token}",
+          "isRequired": true,
+          "variables": {
+            "token": {
+              "description": "Personal Access Token created in Conduktor Console",
+              "isRequired": true,
+              "isSecret": true,
+              "format": "string"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
