@@ -1,0 +1,15 @@
+database:
+  url: postgresql://postgres:pwd@postgres/postgres
+
+admin:
+  email: admin@conduktor.io
+  password: adminP4ss!
+
+# Declared here rather than applied with the CLI: the point of this stack is to
+# have a cluster already wired into Console when it comes up, so the MCP tools
+# return something on the first call.
+clusters:
+  - id: demo
+    name: Demo cluster
+    color: "#0F7B6C"
+    bootstrapServers: "redpanda:9092"

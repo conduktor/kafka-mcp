@@ -33,7 +33,7 @@
   <g font-size="12.5" fill="#1f2328">
     <circle cx="358" cy="169" r="2.5" fill="#0969da"/><text x="370" y="173">Bearer token — a Console PAT</text>
     <circle cx="358" cy="195" r="2.5" fill="#0969da"/><text x="370" y="199">the token owner's own RBAC</text>
-    <circle cx="358" cy="221" r="2.5" fill="#0969da"/><text x="370" y="225">read-only, checked per call</text>
+    <circle cx="358" cy="221" r="2.5" fill="#0969da"/><text x="370" y="225">scoped tools, checked per call</text>
     <circle cx="358" cy="247" r="2.5" fill="#0969da"/><text x="370" y="251">written to the audit log</text>
   </g>
   <text x="352" y="283" font-size="11.5" fill="#8c959f">No deployment — the endpoint ships with Console.</text>

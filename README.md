@@ -1,16 +1,23 @@
-# Conduktor MCP Server
+# Conduktor MCP
 
-An MCP server for Apache Kafka, built into [Conduktor Console](https://www.conduktor.io/console).
+**Put an AI assistant in charge of your Kafka estate.**
 
-Connect Claude, Cursor, or any MCP-compatible client to your Kafka clusters and ask about
-topics, consumer groups, schemas and cluster health in natural language. Metadata is served by
-your own Console instance, so it stays inside your network.
+Not a chat window onto a cluster. A way for agents — yours, or ours — to see what is actually
+happening across every cluster you run, and to act on it: reclaim the topics nobody consumes,
+attribute cost back to the teams spending it, catch the certificate expiring next month, restart
+the connector that failed at 3am, label the topics whose owner left the company.
 
-There is nothing to deploy. The MCP endpoint ships with Console, behind the RBAC, audit trail
-and ownership rules you already run — which is what makes giving an assistant real access
-reasonable in the first place.
+The MCP endpoint ships inside [Conduktor Console](https://www.conduktor.io/console). There is
+nothing to deploy, and nothing new to secure: the assistant inherits the RBAC, audit trail and
+ownership model you already run.
 
-![One endpoint for your tools and for Console agents. Every call carries a Console token, runs under that user's RBAC, is read-only and is audited. Only metadata reaches the model — your records stay in Kafka.](docs/architecture.svg)
+![One endpoint for your tools and for Console agents. Every call runs under the caller's own RBAC and is audited. Metadata reaches the model; your records stay in Kafka.](docs/architecture.svg)
+
+## Try it first
+
+No Kafka to hand? [`demo/`](demo/) brings up a cluster, Console and the MCP endpoint with
+`docker compose up -d`, seeded with topics, traffic and a consumer group that is deliberately
+behind.
 
 ## Setup
 
@@ -31,21 +38,12 @@ Create a Personal Access Token in Console, then point your MCP client at your ow
 }
 ```
 
-Replace `console.acme-corp.com` with your own Console hostname. `/api/mcp` is appended for you,
-and pasting a URL that already ends in it works too.
-
-To check your settings before wiring up a client:
-
-```bash
-CONDUKTOR_CONSOLE_URL=https://console.acme-corp.com \
-CONDUKTOR_API_TOKEN=<token> \
-npx -y @conduktor/mcp
-```
+`/api/mcp` is appended for you. Pasting a URL that already ends in it works too.
 
 <details>
 <summary>Connecting without the package</summary>
 
-`@conduktor/mcp` wraps [`mcp-remote`](https://www.npmjs.com/package/mcp-remote). You can call it
+`@conduktor/mcp` wraps [`mcp-remote`](https://www.npmjs.com/package/mcp-remote). Call it
 yourself if you prefer:
 
 ```json
@@ -67,61 +65,113 @@ yourself if you prefer:
 
 </details>
 
+## What an assistant can ask
+
+Ask in English, get answers grounded in your actual estate rather than in documentation:
+
+> *Which topics haven't been consumed in a month, and who created them?*
+> *What did the payments team cost us last quarter, and what drove it?*
+> *This consumer group is stuck — what's the blocking message?*
+> *Which certificates expire before March, and whose are they?*
+> *Nobody owns these topics. Can you work out who should, from the lineage?*
+
+Those are not demos. Each maps onto tools below, and onto tasks an agent can run unattended.
+
+## From answering to operating
+
+The same catalogue serves two kinds of caller. Your tools — Claude Code, Cursor, scripts, your
+internal developer platform — and **agents running inside Console**, on a schedule or on an
+audit-log event, under their own machine identity.
+
+That second one is where this stops being a chatbot. An agent is a task plus an identity plus a
+bounded set of tools. It wakes up on Monday at 9am, or the moment a connector fails, works the
+problem, and comes back with something you can act on — a report, a recommendation, or a
+mutation it proposes and you approve.
+
+Every run is traced end to end: the prompt, each tool call, the tokens, the result. That is what
+you attach to a ticket, or hand to an auditor.
+
 ## Tools
+
+Thirty-one, across the whole control plane. Most read; some write, and that set is growing.
+
+### Clusters
 
 | Tool | What it does |
 | --- | --- |
-| `list-clusters` | List all Kafka clusters available in Conduktor |
-| `get-cluster` | Get details about a specific cluster by its slug |
-| `list-topics-with-usage` | List topics with usage metrics (message count, size, rates) |
-| `get-last-messages` | Retrieve the last N messages from a topic (up to 100) |
-| `insights-cluster` | Cluster health summary and serialization format breakdown |
-| `insights-topics` | Topic insights — partition skew, replication issues |
-| `list-subject-names` | List subject names in a cluster, filterable by schema type |
-| `list-consumer-groups` | List consumer groups with state, lag and member count |
-| `list-consumer-groups-by-topic` | List consumer groups consuming from a specific topic |
-| `list-interceptors` | List interceptors configured in a cluster (requires Conduktor Gateway) |
+| `list-clusters` | Every Kafka cluster this Console manages, with its Schema Registry, Connect clusters and flavor |
+| `get-cluster` | One cluster's registration by slug |
+| `insights-cluster` | Health score, topic and partition counts, serialization breakdown — the shape of a cluster in one call |
 
-## Control plane, not data plane
+### Topics
 
-What reaches the model is metadata: topics, configs, offsets, consumer groups, schemas,
-connectors, audit. Your records stay in Kafka unless a tool that reads them is explicitly in
-play — `get-last-messages` is the only one above that touches the data plane, and it is capped.
+| Tool | What it does |
+| --- | --- |
+| `list-topics` | Topic catalogue: names, labels, descriptions, partitions, replication, configs |
+| `get-topic` | One topic by exact name |
+| `list-topics-with-usage` | Topics with message count, size and throughput |
+| `query-topics` | Filter topics across a cluster |
+| `aggregate-topics` | Group topics and compute a statistic per group — count, sum, average, min, max |
+| `insights-topics` | Partition skew, replication problems, and what is quietly wrong |
+| `set-topic-labels` **(writes)** | Label topics — ownership, environment, whatever your taxonomy is |
 
-That distinction is the point. An assistant that reasons about how your platform is *run*
-needs ownership, lag, skew and history. It does not need your customers' payloads.
+### Messages
 
-## One endpoint, two kinds of client
+| Tool | What it does |
+| --- | --- |
+| `get-last-messages` | The last N messages from a topic |
+| `get-record-at` | A specific record, by partition and offset — the one blocking a consumer |
 
-The same MCP catalogue serves your own tools — Claude Code, Cursor, a script, your internal
-developer platform — and the agents Conduktor runs inside Console on a schedule or on an
-audit-log event. Same tools, same RBAC, same audit trail, whether the caller is a human at a
-terminal or an unattended task running at 9am on a Monday.
+### Consumer groups
 
-Which matters more than it sounds: it means automating a Kafka chore does not require handing
-a service account to a script. It goes through the same bounded identity as everything else.
+| Tool | What it does |
+| --- | --- |
+| `list-consumer-groups` | Groups with state, lag and member count |
+| `get-consumer-group` | One group in detail |
+| `list-consumer-groups-by-topic` | Who actually reads this topic |
 
-## What's next
+### Schemas
 
-The table above is what ships today, and it is deliberately the read-only slice.
+| Tool | What it does |
+| --- | --- |
+| `list-subjects` · `get-subject` · `list-subject-names` | The subject catalogue |
+| `get-schema-version` | A specific version |
+| `check-schema-compatibility` | Whether a change breaks consumers, before it ships |
 
-The surface is expanding towards agents that do the operational work — finding reclaimable
-topics, attributing cost, chasing unowned topics, nursing failed connectors — and towards
-write operations, where the assistant proposes a mutation with its intent stated and a human
-signs it off. Acting, not just reporting.
+### Connect, Gateway
 
-Watch the [release notes](https://docs.conduktor.io/guide/release-notes) for what lands when.
+| Tool | What it does |
+| --- | --- |
+| `list-connectors-detailed` · `get-connector` | Connectors and their state |
+| `list-interceptors` | Gateway interceptors configured on a cluster |
 
-## Permissions
+### Access, identity, governance, cost
 
-**The tools listed above are read-only.**
+| Tool | What it does |
+| --- | --- |
+| `list-acl-bindings` | Who is allowed to do what |
+| `list-service-accounts` · `get-service-account` | Non-human identities |
+| `list-certificates` | Certificates and their expiry |
+| `list-applications` | Applications registered in the catalogue |
+| `get-stream-lineage` | What flows into what |
+| `query-audit-log` | Who did what, when |
+| `get-chargeback-report` | Cost attributed per team |
 
-The server acts as the user behind the token: it inherits that user's Console RBAC, and can
-only reach clusters, topics and subjects that user is already allowed to read. Scope the token
-to what you intend the assistant to see.
+## Security is what makes this possible
 
-RBAC is what holds when write lands, which is the point of running this through Console rather
-than against the brokers: permissions, audit and ownership are already there.
+Giving an agent real access to production is only reasonable because the boundaries already
+exist and are enforced per call.
+
+**It is you.** Every call carries a Console token and runs under that user's RBAC. An agent
+cannot see a cluster its owner cannot see. Revoke the owner's access and the agent loses it at
+the same instant.
+
+**Control plane, not data plane.** What reaches the model is metadata — topics, configs,
+offsets, groups, schemas, lineage, cost. Your records stay in Kafka unless a task explicitly
+needs a tool that reads them.
+
+**Everything is audited.** Every call lands in the Console audit log, attributable to the
+identity that made it.
 
 ## Documentation
 
@@ -131,9 +181,6 @@ than against the brokers: permissions, audit and ownership are already there.
 
 ## What is in this repository
 
-The launcher published as [`@conduktor/mcp`](https://www.npmjs.com/package/@conduktor/mcp),
-this documentation, and the registry metadata (`server.json`).
-
-The MCP server itself runs inside Conduktor Console and is not open source. For bugs in the
-server, use Conduktor support; for anything about the launcher or these docs, open an issue
-here.
+The launcher published as [`@conduktor/mcp`](https://www.npmjs.com/package/@conduktor/mcp), this
+documentation, and the registry metadata. The server itself runs inside Console. For bugs in the
+server use Conduktor support; for the launcher or these docs, open an issue here.
