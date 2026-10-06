@@ -6,7 +6,9 @@ Connect Claude, Cursor, or any MCP-compatible client to your Kafka clusters and 
 topics, consumer groups, schemas and cluster health in natural language. Metadata is served by
 your own Console instance, so it stays inside your network.
 
-There is nothing to deploy. The MCP endpoint ships with Console.
+There is nothing to deploy. The MCP endpoint ships with Console, behind the RBAC, audit trail
+and ownership rules you already run — which is what makes giving an assistant real access
+reasonable in the first place.
 
 ## Setup
 
@@ -49,13 +51,22 @@ Replace `console.acme-corp.com` with your own Console hostname. The endpoint is 
 | `list-consumer-groups-by-topic` | List consumer groups consuming from a specific topic |
 | `list-interceptors` | List interceptors configured in a cluster (requires Conduktor Gateway) |
 
+## What's next
+
+The table above is what ships today. The tool surface is expanding, and write operations are
+coming — the assistant will be able to act on Kafka, not only read it. Watch the
+[release notes](https://docs.conduktor.io/guide/release-notes) for what lands when.
+
 ## Permissions
 
-Every tool is read-only.
+**The tools listed above are read-only.**
 
 The server acts as the user behind the token: it inherits that user's Console RBAC, and can
 only reach clusters, topics and subjects that user is already allowed to read. Scope the token
 to what you intend the assistant to see.
+
+RBAC is what holds when write lands, which is the point of running this through Console rather
+than against the brokers: permissions, audit and ownership are already there.
 
 ## Documentation
 
