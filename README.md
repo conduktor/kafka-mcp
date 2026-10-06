@@ -51,11 +51,35 @@ Replace `console.acme-corp.com` with your own Console hostname. The endpoint is 
 | `list-consumer-groups-by-topic` | List consumer groups consuming from a specific topic |
 | `list-interceptors` | List interceptors configured in a cluster (requires Conduktor Gateway) |
 
+## Control plane, not data plane
+
+What reaches the model is metadata: topics, configs, offsets, consumer groups, schemas,
+connectors, audit. Your records stay in Kafka unless a tool that reads them is explicitly in
+play — `get-last-messages` is the only one above that touches the data plane, and it is capped.
+
+That distinction is the point. An assistant that reasons about how your platform is *run*
+needs ownership, lag, skew and history. It does not need your customers' payloads.
+
+## One endpoint, two kinds of client
+
+The same MCP catalogue serves your own tools — Claude Code, Cursor, a script, your internal
+developer platform — and the agents Conduktor runs inside Console on a schedule or on an
+audit-log event. Same tools, same RBAC, same audit trail, whether the caller is a human at a
+terminal or an unattended task running at 9am on a Monday.
+
+Which matters more than it sounds: it means automating a Kafka chore does not require handing
+a service account to a script. It goes through the same bounded identity as everything else.
+
 ## What's next
 
-The table above is what ships today. The tool surface is expanding, and write operations are
-coming — the assistant will be able to act on Kafka, not only read it. Watch the
-[release notes](https://docs.conduktor.io/guide/release-notes) for what lands when.
+The table above is what ships today, and it is deliberately the read-only slice.
+
+The surface is expanding towards agents that do the operational work — finding reclaimable
+topics, attributing cost, chasing unowned topics, nursing failed connectors — and towards
+write operations, where the assistant proposes a mutation with its intent stated and a human
+signs it off. Acting, not just reporting.
+
+Watch the [release notes](https://docs.conduktor.io/guide/release-notes) for what lands when.
 
 ## Permissions
 
