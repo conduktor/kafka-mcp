@@ -10,6 +10,8 @@ There is nothing to deploy. The MCP endpoint ships with Console, behind the RBAC
 and ownership rules you already run — which is what makes giving an assistant real access
 reasonable in the first place.
 
+![One endpoint for your tools and for Console agents. Every call carries a Console token, runs under that user's RBAC, is read-only and is audited. Only metadata reaches the model — your records stay in Kafka.](docs/architecture.svg)
+
 ## Setup
 
 1. Create a Personal Access Token in Console.

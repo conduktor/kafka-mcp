@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" width="900" height="470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img" aria-label="Architecture: MCP clients and Console agents both reach Kafka through one Conduktor Console endpoint, under the caller's own RBAC, read-only and audited. Only metadata reaches the model.">
+  <title>Conduktor MCP — one endpoint, your RBAC, metadata only</title>
+
+  <rect width="900" height="470" fill="#ffffff"/>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8c959f"/>
+    </marker>
+    <marker id="aq" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0969da"/>
+    </marker>
+  </defs>
+
+  <!-- ─── column headings ─────────────────────────────────────────────── -->
+  <text x="40" y="36" font-size="11" font-weight="600" fill="#8c959f" letter-spacing="0.8">CALLERS</text>
+  <text x="330" y="36" font-size="11" font-weight="600" fill="#8c959f" letter-spacing="0.8">CONDUKTOR CONSOLE</text>
+  <text x="730" y="36" font-size="11" font-weight="600" fill="#8c959f" letter-spacing="0.8">KAFKA</text>
+
+  <!-- ─── callers ─────────────────────────────────────────────────────── -->
+  <g>
+    <rect x="30" y="56" width="215" height="112" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="46" y="80" font-size="13" font-weight="600" fill="#1f2328">Your tools</text>
+    <text x="46" y="102" font-size="12.5" fill="#656d76">Claude Code · Cursor</text>
+    <text x="46" y="122" font-size="12.5" fill="#656d76">scripts · internal platform</text>
+    <text x="46" y="148" font-size="11.5" fill="#8c959f">a human, at a terminal</text>
+  </g>
+
+  <g>
+    <rect x="30" y="188" width="215" height="112" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="46" y="212" font-size="13" font-weight="600" fill="#1f2328">Console agents</text>
+    <text x="46" y="234" font-size="12.5" fill="#656d76">on a schedule</text>
+    <text x="46" y="254" font-size="12.5" fill="#656d76">on an audit-log event</text>
+    <text x="46" y="280" font-size="11.5" fill="#8c959f">unattended, 9am Monday</text>
+  </g>
+
+  <path d="M245,112 C285,112 285,178 325,178" fill="none" stroke="#8c959f" stroke-width="1.4" marker-end="url(#a)"/>
+  <path d="M245,244 C285,244 285,198 325,198" fill="none" stroke="#8c959f" stroke-width="1.4" marker-end="url(#a)"/>
+
+  <!-- ─── console ─────────────────────────────────────────────────────── -->
+  <rect x="330" y="56" width="300" height="244" rx="10" fill="#f6f8fa" stroke="#d0d7de"/>
+
+  <rect x="352" y="80" width="256" height="40" rx="6" fill="#ffffff" stroke="#0969da"/>
+  <text x="368" y="105" font-size="13" font-weight="600" fill="#0969da" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">/api/mcp</text>
+  <text x="470" y="105" font-size="11.5" fill="#656d76">10 read-only tools</text>
+
+  <text x="352" y="148" font-size="11" font-weight="600" fill="#8c959f" letter-spacing="0.6">EVERY CALL</text>
+
+  <g font-size="12.5" fill="#1f2328">
+    <circle cx="358" cy="169" r="2.5" fill="#0969da"/>
+    <text x="370" y="173">Bearer token — a Console PAT</text>
+    <circle cx="358" cy="195" r="2.5" fill="#0969da"/>
+    <text x="370" y="199">the token owner's own RBAC</text>
+    <circle cx="358" cy="221" r="2.5" fill="#0969da"/>
+    <text x="370" y="225">read-only, checked per call</text>
+    <circle cx="358" cy="247" r="2.5" fill="#0969da"/>
+    <text x="370" y="251">written to the audit log</text>
+  </g>
+
+  <text x="352" y="283" font-size="11.5" fill="#8c959f">No deployment — the endpoint ships with Console.</text>
+
+  <!-- ─── kafka ───────────────────────────────────────────────────────── -->
+  <path d="M630,178 L715,178" fill="none" stroke="#8c959f" stroke-width="1.4" marker-end="url(#a)"/>
+
+  <g>
+    <rect x="720" y="56" width="150" height="244" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="738" y="86" font-size="12.5" fill="#1f2328">clusters</text>
+    <text x="738" y="112" font-size="12.5" fill="#1f2328">topics · configs</text>
+    <text x="738" y="138" font-size="12.5" fill="#1f2328">consumer groups</text>
+    <text x="738" y="164" font-size="12.5" fill="#1f2328">Schema Registry</text>
+    <text x="738" y="190" font-size="12.5" fill="#1f2328">Connect</text>
+    <text x="738" y="216" font-size="12.5" fill="#1f2328">ACLs · audit log</text>
+    <line x1="738" y1="236" x2="852" y2="236" stroke="#d0d7de"/>
+    <text x="738" y="258" font-size="12.5" fill="#8c959f">your records</text>
+    <text x="738" y="276" font-size="11" fill="#8c959f">stay here</text>
+  </g>
+
+  <!-- ─── control plane vs data plane ─────────────────────────────────── -->
+  <line x1="30" y1="344" x2="870" y2="344" stroke="#d0d7de"/>
+
+  <text x="30" y="376" font-size="11" font-weight="600" fill="#8c959f" letter-spacing="0.8">WHAT REACHES THE MODEL</text>
+
+  <rect x="30" y="392" width="408" height="56" rx="8" fill="#ffffff" stroke="#0969da"/>
+  <text x="48" y="416" font-size="13" font-weight="600" fill="#1f2328">Metadata</text>
+  <text x="48" y="436" font-size="12" fill="#656d76">topics, configs, offsets, groups, schemas, lag, ownership</text>
+
+  <path d="M438,420 L492,420" fill="none" stroke="#0969da" stroke-width="1.4" marker-end="url(#aq)"/>
+
+  <rect x="497" y="392" width="373" height="56" rx="8" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="515" y="416" font-size="13" font-weight="600" fill="#1f2328">Not your payloads</text>
+  <text x="515" y="436" font-size="12" fill="#656d76">unless a task explicitly needs a message-reading tool</text>
+</svg>
