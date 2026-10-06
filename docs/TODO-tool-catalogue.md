@@ -13,11 +13,14 @@ need to follow.
 tool's name, description and enforced permissions, and is kept in step with the code by a
 coverage test — regenerate the table from it rather than hand-maintaining a copy.
 
-## Why this is not done here and now
+The full list as it stands is in [`tool-catalogue.md`](tool-catalogue.md): 31 tools, one of
+which writes (`set-topic-labels`).
 
-The public docs still describe ten. This repository is public, so listing tools that
-`docs.conduktor.io` does not announce would publish a roadmap ahead of the product, in a file
-written specifically to be read and repeated by models.
+## Why this is a draft and not a merge
+
+The public docs still describe ten. Merging would put the other twenty-one in the README ahead
+of `docs.conduktor.io`, in the file most likely to be read and repeated by models — a product
+announcement made from a repository.
 
 Ordering therefore matters: public docs first, this README second.
 
