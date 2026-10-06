@@ -14,21 +14,16 @@ reasonable in the first place.
 
 ## Setup
 
-1. Create a Personal Access Token in Console.
-2. Point your MCP client at your Console URL:
+Create a Personal Access Token in Console, then point your MCP client at your own Console:
 
 ```json
 {
   "mcpServers": {
-    "conduktor-console": {
+    "conduktor": {
       "command": "npx",
-      "args": [
-        "mcp-remote",
-        "https://console.acme-corp.com/api/mcp",
-        "--header",
-        "Authorization: Bearer ${CONDUKTOR_API_TOKEN}"
-      ],
+      "args": ["-y", "@conduktor/mcp"],
       "env": {
+        "CONDUKTOR_CONSOLE_URL": "https://console.acme-corp.com",
         "CONDUKTOR_API_TOKEN": "your-personal-access-token"
       }
     }
@@ -36,7 +31,41 @@ reasonable in the first place.
 }
 ```
 
-Replace `console.acme-corp.com` with your own Console hostname. The endpoint is `/api/mcp`.
+Replace `console.acme-corp.com` with your own Console hostname. `/api/mcp` is appended for you,
+and pasting a URL that already ends in it works too.
+
+To check your settings before wiring up a client:
+
+```bash
+CONDUKTOR_CONSOLE_URL=https://console.acme-corp.com \
+CONDUKTOR_API_TOKEN=<token> \
+npx -y @conduktor/mcp
+```
+
+<details>
+<summary>Connecting without the package</summary>
+
+`@conduktor/mcp` wraps [`mcp-remote`](https://www.npmjs.com/package/mcp-remote). You can call it
+yourself if you prefer:
+
+```json
+{
+  "mcpServers": {
+    "conduktor": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://console.acme-corp.com/api/mcp",
+        "--header",
+        "Authorization: Bearer ${CONDUKTOR_API_TOKEN}"
+      ],
+      "env": { "CONDUKTOR_API_TOKEN": "your-personal-access-token" }
+    }
+  }
+}
+```
+
+</details>
 
 ## Tools
 
@@ -100,8 +129,11 @@ than against the brokers: permissions, audit and ownership are already there.
 - [Product page](https://www.conduktor.io/mcp)
 - [Console documentation](https://docs.conduktor.io/)
 
-## Issues
+## What is in this repository
 
-This repository documents the MCP server and carries its registry metadata. For bugs in the
-server itself, use Conduktor support or the [documentation feedback](https://docs.conduktor.io/)
-channel.
+The launcher published as [`@conduktor/mcp`](https://www.npmjs.com/package/@conduktor/mcp),
+this documentation, and the registry metadata (`server.json`).
+
+The MCP server itself runs inside Conduktor Console and is not open source. For bugs in the
+server, use Conduktor support; for anything about the launcher or these docs, open an issue
+here.

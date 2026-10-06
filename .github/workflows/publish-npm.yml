@@ -1,0 +1,38 @@
+name: Publish to npm
+
+# Runs when package.json changes, so bumping the version there is the release.
+#
+# Uses npm trusted publishing: OIDC proves this workflow belongs to the repo,
+# so there is no NPM_TOKEN to store or rotate, and the package gets provenance
+# attestation. It requires @conduktor/mcp to have this repo and workflow
+# registered as a trusted publisher on npmjs.com.
+
+on:
+  push:
+    branches: [main]
+    paths: ["package.json"]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # trusted publishing
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      # npm >= 11.5 is what understands OIDC trusted publishing.
+      - run: npm install -g npm@latest
+
+      - name: Smoke-test the launcher
+        run: |
+          node bin/conduktor-mcp.js 2>&1 | grep -q "no Console URL"
+          CONDUKTOR_CONSOLE_URL=http://x CONDUKTOR_API_TOKEN=t \
+            node bin/conduktor-mcp.js 2>&1 | grep -q "refusing to send your token"
+
+      - run: npm publish --provenance --access public
