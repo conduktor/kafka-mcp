@@ -7,7 +7,7 @@
     "url": "https://github.com/conduktor/kafka-mcp",
     "source": "github"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "websiteUrl": "https://www.conduktor.io/mcp",
   "remotes": [
     {
@@ -33,6 +33,31 @@
               "format": "string"
             }
           }
+        }
+      ]
+    }
+  ],
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@conduktor/mcp",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "CONDUKTOR_CONSOLE_URL",
+          "description": "Your Conduktor Console base URL, e.g. https://console.acme-corp.com",
+          "isRequired": true,
+          "format": "string"
+        },
+        {
+          "name": "CONDUKTOR_API_TOKEN",
+          "description": "Personal Access Token created in Conduktor Console",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
         }
       ]
     }

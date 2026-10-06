@@ -1,6 +1,6 @@
 {
   "name": "@conduktor/mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Connect an MCP client to Kafka through Conduktor Console",
   "mcpName": "io.github.conduktor/kafka-mcp",
   "type": "module",
