@@ -9,32 +9,21 @@
   },
   "version": "1.0.0",
   "websiteUrl": "https://www.conduktor.io/mcp",
-  "packages": [
+  "remotes": [
     {
-      "registryType": "npm",
-      "identifier": "mcp-remote",
-      "version": "0.1.29",
-      "transport": {
-        "type": "stdio"
-      },
-      "runtimeArguments": [
-        {
-          "type": "positional",
-          "value": "{console_url}/api/mcp",
-          "description": "Your Conduktor Console MCP endpoint",
+      "type": "streamable-http",
+      "url": "https://{console_host}/api/mcp",
+      "variables": {
+        "console_host": {
+          "description": "Your Conduktor Console hostname, e.g. console.acme-corp.com",
           "isRequired": true,
-          "variables": {
-            "console_url": {
-              "description": "Base URL of your Conduktor Console, e.g. https://console.acme-corp.com",
-              "isRequired": true,
-              "format": "string"
-            }
-          }
-        },
+          "format": "string"
+        }
+      },
+      "headers": [
         {
-          "type": "named",
-          "name": "--header",
-          "value": "Authorization: Bearer {token}",
+          "name": "Authorization",
+          "value": "Bearer {token}",
           "isRequired": true,
           "variables": {
             "token": {
