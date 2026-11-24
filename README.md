@@ -1,5 +1,7 @@
 # Conduktor MCP
 
+[![conduktor/kafka-mcp MCP server](https://glama.ai/mcp/servers/conduktor/kafka-mcp/badges/score.svg)](https://glama.ai/mcp/servers/conduktor/kafka-mcp)
+
 **Put an AI assistant in charge of your Kafka estate.**
 
 Not a chat window onto a cluster. A way for agents — yours, or ours — to see what is actually
